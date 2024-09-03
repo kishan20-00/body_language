@@ -1,0 +1,6 @@
+train : data_images/train
+val : data_images/test
+
+nc: 10
+
+names: ["Female (0 - 12)","Female (13 - 18)","Female (19 - 34)","Female (34 - 59)","Female (60 - 100)","Male (0 - 12)","Male (13 - 18)","Male (19 - 34)","Male (34 - 59)","Male (60 - 100)"]
