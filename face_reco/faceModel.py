@@ -1,28 +1,36 @@
-from flask import Flask, request, Response
+from flask import Flask, request, send_file
 import cv2
-import os
-import io
+import numpy as np
 import pickle
 from ultralytics import YOLO
-import tensorflow
 from tensorflow.keras.applications.mobilenet import preprocess_input
-import numpy as np
 from keras.applications import MobileNet
 from werkzeug.utils import secure_filename
+from flask_cors import CORS
+import tempfile
+import os
+import warnings
+from sklearn.exceptions import InconsistentVersionWarning
+
+# Suppress the InconsistentVersionWarning (optional)
+warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 
 app = Flask(__name__)
+CORS(app)
 
 # Load the trained classifier
 model_path = 'mobilenet_svm_4.pkl'  # Path to your model
 with open(model_path, 'rb') as model_file:
     classifier = pickle.load(model_file)
 
-def generate_frames(video_stream):
+def process_video_file(input_video_path, output_video_path):
     facemodel = YOLO('yolov8n-face.pt')  # Path to YOLO model
     base_model = MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
-    cap = cv2.VideoCapture(video_stream)
-    trackers = {}
-    track_id_counter = 0  # Counter for assigning unique track IDs
+    cap = cv2.VideoCapture(input_video_path)
+
+    # Define the codec and create VideoWriter object
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # You can use 'XVID' or 'mp4v'
+    out = cv2.VideoWriter(output_video_path, fourcc, 20.0, (int(cap.get(3)), int(cap.get(4))))
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -62,23 +70,23 @@ def generate_frames(video_stream):
             face_resized = cv2.resize(face_crop, (224, 224))
             face_resized = np.expand_dims(face_resized, axis=0)
             face_resized = preprocess_input(face_resized)
-
+            
             face_features = base_model.predict(face_resized)
             face_features_flat = np.reshape(face_features, (1, -1))
-
+            
             person_id = classifier.predict(face_features_flat)[0]
             confidence_score = classifier.decision_function(face_features_flat)[0]
-
+            if isinstance(confidence_score, np.ndarray):
+                confidence_score = confidence_score[0]
+                
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 1)
-            cv2.putText(frame, f'ID: {person_id} ({confidence_score[0]:.2f})', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+            cv2.putText(frame, f'ID: {person_id} ({confidence_score:.2f})', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
-        # Encode the frame to bytes and yield as a response
-        ret, buffer = cv2.imencode('.mp4', frame)
-        frame = buffer.tobytes()
-        yield (b'--frame\r\n'
-               b'Content-Type: video/mp4\r\n\r\n' + frame + b'\r\n')
+        # Write the frame to the output video
+        out.write(frame)
 
     cap.release()
+    out.release()
 
 @app.route('/process_video', methods=['POST'])
 def process_video():
@@ -88,11 +96,20 @@ def process_video():
     video = request.files['video']
     filename = secure_filename(video.filename)
 
-    # Read the video stream
-    video_stream = io.BytesIO(video.read())
+    # Save the video to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_video:
+        video.save(temp_video.name)
 
-    # Generate and return the processed video frames
-    return Response(generate_frames(video_stream), mimetype='multipart/x-mixed-replace; boundary=frame')
+        # Process and save the output video to another temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as output_video:
+            process_video_file(temp_video.name, output_video.name)
+            response = send_file(output_video.name, as_attachment=True, download_name="processed_video.mp4")
+            
+            # Clean up temporary files
+            os.remove(temp_video.name)
+            os.remove(output_video.name)
+
+            return response
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)

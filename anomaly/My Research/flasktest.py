@@ -4,7 +4,7 @@ import requests
 url = 'http://localhost:5001/process_video'
 
 # Path to your input video file
-input_video_path = 'path_to_your_video.mp4'
+input_video_path = 'D:/Github/body_language/anomaly/My Research/uploads/aa.mp4'
 
 # Path to save the output video
 output_video_path = 'processed_video.mp4'

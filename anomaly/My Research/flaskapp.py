@@ -1,11 +1,11 @@
-from flask import Flask, request, Response
+from flask import Flask, request, send_file
 import cv2
-import numpy as np
-import io
 import tempfile
 from ultralytics import YOLO
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Load YOLO model
 model_path = 'runs/detect/train/weights/best.pt'
@@ -19,7 +19,6 @@ class_name_dict = {
 
 @app.route('/process_video', methods=['POST'])
 def process_video():
-    # Check if video file is in the request
     if 'video' not in request.files:
         return {"error": "No video file provided"}, 400
 
@@ -44,8 +43,10 @@ def process_video():
 
     H, W, _ = frame.shape
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    output_stream = io.BytesIO()
-    out = cv2.VideoWriter(output_stream, fourcc, int(cap.get(cv2.CAP_PROP_FPS)), (W, H))
+
+    # Create a temporary file to store the output video
+    temp_output = tempfile.NamedTemporaryFile(delete=False, suffix='.mp4')
+    out = cv2.VideoWriter(temp_output.name, fourcc, int(cap.get(cv2.CAP_PROP_FPS)), (W, H))
 
     while ret:
         results = model(frame)[0]
@@ -61,10 +62,9 @@ def process_video():
 
     cap.release()
     out.release()
-    output_stream.seek(0)
 
-    # Return the processed video as a response
-    return Response(output_stream, mimetype='video/mp4')
+    # Serve the processed video file for download
+    return send_file(temp_output.name, mimetype='video/mp4', as_attachment=True, download_name='processed_video.mp4')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

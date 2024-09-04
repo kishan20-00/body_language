@@ -11,7 +11,7 @@ const Home = () => {
         <div className="cards">
           <Card title="Anomaly Detection" link="/anomaly" icon="📄" />
           <Card title="Person Identification" link="/identify" icon="📊" />
-          <Card title="Face Recognition" link="/page3" icon="📘" />
+          <Card title="Face Recognition" link="/videoprocess" icon="📘" />
           <Card title="Path Tracking" link="/page4" icon="🔧" />
         </div>
       </div>
