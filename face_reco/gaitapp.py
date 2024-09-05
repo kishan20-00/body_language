@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import tempfile
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_file
 from tensorflow.keras.models import load_model
 from io import BytesIO
 import os
@@ -33,9 +33,9 @@ def process_video():
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     output_fps = cap.get(cv2.CAP_PROP_FPS)
     
-    output_video_stream = BytesIO()
+    output_file_path = tempfile.NamedTemporaryFile(suffix=".avi", delete=False).name
     fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-    out = cv2.VideoWriter('output.avi', fourcc, output_fps, (frame_width, frame_height))
+    out = cv2.VideoWriter(output_file_path, fourcc, output_fps, (frame_width, frame_height))
 
     trackers = {}
     track_id_counter = 0
@@ -132,12 +132,10 @@ def process_video():
     cap.release()
     out.release()
 
-    with open('output.avi', 'rb') as f:
-        output_video_stream.write(f.read())
-
     os.remove(temp_video_file.name)
 
-    return Response(output_video_stream.getvalue(), mimetype='video/x-msvideo')
+    # Send the output video for download
+    return send_file(output_file_path, as_attachment=True, download_name='processed_video.avi')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5002)

@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, after_this_request
 import cv2
 import numpy as np
 import pickle
@@ -103,13 +103,17 @@ def process_video():
         # Process and save the output video to another temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as output_video:
             process_video_file(temp_video.name, output_video.name)
-            response = send_file(output_video.name, as_attachment=True, download_name="processed_video.mp4")
-            
-            # Clean up temporary files
-            os.remove(temp_video.name)
-            os.remove(output_video.name)
 
-            return response
+            @after_this_request
+            def cleanup(response):
+                try:
+                    os.remove(temp_video.name)
+                    os.remove(output_video.name)
+                except Exception as e:
+                    print(f"Error removing temporary files: {e}")
+                return response
+
+            return send_file(output_video.name, as_attachment=True, download_name="processed_video.mp4")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

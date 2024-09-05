@@ -1,38 +1,48 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './Home.css';
+import { FaUserCheck, FaExclamationCircle, FaRoute } from 'react-icons/fa';
+import { MdFace } from 'react-icons/md';
+import './Home.css'; // Import custom styles for Home page
 
 const Home = () => {
   return (
-    <div className="App">
-      <Navbar />
-      <div className="container">
-        <h1>BodyLanguage</h1>
-        <div className="cards">
-          <Card title="Anomaly Detection" link="/anomaly" icon="📄" />
-          <Card title="Person Identification" link="/identify" icon="📊" />
-          <Card title="Face Recognition" link="/videoprocess" icon="📘" />
-          <Card title="Path Tracking" link="/page4" icon="🔧" />
+    <div className="home-container">
+      <h1>Welcome to Surveillance System Dashboard</h1>
+
+      <div className="card-grid">
+        {/* Face Recognition Card */}
+        <div className="card">
+          <MdFace className="card-icon" size={50} />
+          <h3>Face Recognition</h3>
+          <p>Identify people using facial recognition technology.</p>
+          <Link to="/videoprocess" className="card-link">Go to Face Recognition</Link>
+        </div>
+
+        {/* Person Identification Card */}
+        <div className="card">
+          <FaUserCheck className="card-icon" size={50} />
+          <h3>Person Identification</h3>
+          <p>Track and identify individuals in video footage.</p>
+          <Link to="/identify" className="card-link">Go to Person Identification</Link>
+        </div>
+
+        {/* Anomaly Detection Card */}
+        <div className="card">
+          <FaExclamationCircle className="card-icon" size={50} />
+          <h3>Anomaly Detection</h3>
+          <p>Detect unusual activities in video streams.</p>
+          <Link to="/anomaly" className="card-link">Go to Anomaly Detection</Link>
+        </div>
+
+        {/* Path Tracking Card */}
+        <div className="card">
+          <FaRoute className="card-icon" size={50} />
+          <h3>Path Tracking</h3>
+          <p>Track movement paths in videos for further insights.</p>
+          <Link to="/pathtrack" className="card-link">Go to Path Tracking</Link>
         </div>
       </div>
     </div>
-  );
-};
-
-const Navbar = () => {
-  return (
-    <nav className="navbar">
-      <h2>BodyLanguage</h2>
-    </nav>
-  );
-};
-
-const Card = ({ title, link, icon }) => {
-  return (
-    <Link to={link} className="card">
-      <div className="card-icon">{icon}</div>
-      <h3>{title}</h3>
-    </Link>
   );
 };
 
