@@ -1,0 +1,84 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #4d081d;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: rgba(255, 255, 255, 0.18);
+}
+
+.App-link {
+  color: #dc91ff;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.modalz {
+
+  display: none;
+
+}
+
+.footer-custom {
+  background-color: #dc91ff;
+  color: #fff;
+  padding: 20px 0;
+}
+
+.navbar-custom {
+  background-color: #dc91ff;
+}
+
+.center-div-custom{
+  min-height: 100%;
+}
+
+.home_image{
+  position: absolute;
+  float: right;
+  width : 800px;
+}
+
+.home_Title{
+  color: #4CBB17;
+  margin-top: 200px;
+  max-width: 500px;
+  float: left;
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-nav .nav-link {
+  color: #fff !important;
+}
+
+.navbar-custom .navbar-toggler-icon {
+  background-color: #fff;
+}
+
+.app-main-div{
+  min-height: 85vh;
+}

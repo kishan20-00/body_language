@@ -1,0 +1,64 @@
+/* Scoping the styles to only apply to .video-processing-container */
+.video-processing-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.video-processing-container h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.video-processing-container input[type="file"] {
+  padding: 10px;
+  margin: 20px 0;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.video-processing-container button {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.video-processing-container button:disabled {
+  background-color: #aaa;
+}
+
+.video-processing-container button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.video-processing-container h3 {
+  margin-top: 30px;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.video-processing-container a {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease;
+}
+
+.video-processing-container a:hover {
+  background-color: #218838;
+}
