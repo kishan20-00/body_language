@@ -1,0 +1,6 @@
+flask
+flask_cors
+pandas
+scikit-learn==1.0
+
+#pip install -r requirements.txt
