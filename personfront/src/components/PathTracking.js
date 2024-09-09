@@ -45,7 +45,7 @@ const PathTrack = () => {
 
   return (
     <div className="upload-container">
-      <h1>Video Upload and Processing</h1>
+      <h1>Path Tracking</h1>
       <div className="upload-section">
         <form onSubmit={handleSubmit}>
           <input type="file" accept="video/*" onChange={handleFileChange} className="file-input" />

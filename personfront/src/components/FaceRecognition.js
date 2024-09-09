@@ -1,130 +1,60 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './VideoProcessing.css'; // Import the CSS file
+import './VideoProcessing.css';  // Import the CSS file
 
-const VideoProcessing = () => {
-  const [selectedFileFace, setSelectedFileFace] = useState(null);
-  const [selectedFileGait, setSelectedFileGait] = useState(null);
-  const [videoURLFace, setVideoURLFace] = useState('');
-  const [videoURLGait, setVideoURLGait] = useState('');
-  const [loadingFace, setLoadingFace] = useState(false);
-  const [loadingGait, setLoadingGait] = useState(false);
+function VideoProcessing() {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState('');
 
-  // Handle file change for Face Recognition
-  const handleFileChangeFace = (event) => {
-    setSelectedFileFace(event.target.files[0]);
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setDownloadUrl('');
   };
 
-  // Handle file change for Gait Analysis
-  const handleFileChangeGait = (event) => {
-    setSelectedFileGait(event.target.files[0]);
-  };
-
-  // Handle form submission for Face Recognition
-  const handleSubmitFace = async (event) => {
-    event.preventDefault();
-
-    if (!selectedFileFace) {
-      alert("Please select a video file for Face Recognition.");
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      alert("Please select a video file first.");
       return;
     }
 
-    setLoadingFace(true);
-
     const formData = new FormData();
-    formData.append('video', selectedFileFace);
+    formData.append('video', selectedFile);
+
+    setProcessing(true);
 
     try {
-      const response = await axios.post('http://localhost:5001/process_video', formData, {
-        responseType: 'blob'
+      const response = await axios.post('http://127.0.0.1:5001/upload', formData, {
+        responseType: 'blob' // Important for downloading the file
       });
 
-      const videoBlob = new Blob([response.data], { type: 'video/avi' });
-      const videoUrl = URL.createObjectURL(videoBlob);
-      setVideoURLFace(videoUrl);
+      // Create a URL for the processed video blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      setDownloadUrl(url);
     } catch (error) {
-      console.error('Error uploading video for Face Recognition:', error);
-      alert('Failed to process video for Face Recognition.');
+      console.error("There was an error processing the video!", error);
     } finally {
-      setLoadingFace(false);
-    }
-  };
-
-  // Handle form submission for Gait Analysis
-  const handleSubmitGait = async (event) => {
-    event.preventDefault();
-
-    if (!selectedFileGait) {
-      alert("Please select a video file for Gait Analysis.");
-      return;
-    }
-
-    setLoadingGait(true);
-
-    const formData = new FormData();
-    formData.append('video', selectedFileGait);
-
-    try {
-      const response = await axios.post('http://localhost:5002/process_video', formData, {
-        responseType: 'blob'
-      });
-
-      const videoBlob = new Blob([response.data], { type: 'video/avi' });
-      const videoUrl = URL.createObjectURL(videoBlob);
-      setVideoURLGait(videoUrl);
-    } catch (error) {
-      console.error('Error uploading video for Gait Analysis:', error);
-      alert('Failed to process video for Gait Analysis.');
-    } finally {
-      setLoadingGait(false);
+      setProcessing(false);
     }
   };
 
   return (
-    <div className="container">
-      <h1>Video Processing</h1>
-      
-      {/* Face Recognition Section */}
-      <div className="section">
-        <h2>Face Recognition</h2>
-        <form onSubmit={handleSubmitFace}>
-          <input type="file" accept="video/*" onChange={handleFileChangeFace} className="file-input" />
-          <button type="submit" disabled={loadingFace} className="submit-button">
-            {loadingFace ? 'Processing...' : 'Upload for Face Recognition'}
-          </button>
-        </form>
-        {videoURLFace && (
-          <div className="video-section">
-            <h3>Processed Video:</h3>
-            <video controls src={videoURLFace} className="video-player" />
-            <a href={videoURLFace} download="processed_face_video.avi" className="download-link">
-              Download Processed Face Recognition Video
-            </a>
-          </div>
-        )}
-      </div>
-
-      {/* Gait Analysis Section */}
-      <div className="section">
-        <h2>Gait Analysis</h2>
-        <form onSubmit={handleSubmitGait}>
-          <input type="file" accept="video/*" onChange={handleFileChangeGait} className="file-input" />
-          <button type="submit" disabled={loadingGait} className="submit-button">
-            {loadingGait ? 'Processing...' : 'Upload for Gait Analysis'}
-          </button>
-        </form>
-        {videoURLGait && (
-          <div className="video-section">
-            <h3>Processed Video:</h3>
-            <video controls src={videoURLGait} className="video-player" />
-            <a href={videoURLGait} download="processed_gait_video.avi" className="download-link">
-              Download Processed Gait Analysis Video
-            </a>
-          </div>
-        )}
-      </div>
+    <div className="video-processing-container">
+      <h1>Face Recognition & Gait Analysis</h1>
+      <input type="file" accept="video/*" onChange={handleFileChange} />
+      <button onClick={handleUpload} disabled={!selectedFile || processing}>
+        {processing ? 'Processing...' : 'Upload and Process'}
+      </button>
+      {downloadUrl && (
+        <div>
+          <h3>Download Processed Video</h3>
+          <a href={downloadUrl} download="processed_face_reco.mp4">
+            Download Video
+          </a>
+        </div>
+      )}
     </div>
   );
-};
+}
 
 export default VideoProcessing;

@@ -34,7 +34,7 @@ function VideoUpload() {
 
     return (
         <div className="video-upload-container">
-            <h1>Upload Video</h1>
+            <h1>Anomaly Detection</h1>
             <input type="file" onChange={handleVideoUpload} accept="video/mp4" className="file-input" />
             <button onClick={handleSubmit} className="upload-button" disabled={loading}>
                 {loading ? 'Processing...' : 'Upload and Process'} {/* Display loading text */}

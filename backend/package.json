@@ -1,0 +1,36 @@
+{
+  "name": "path_tracking_object_research_2024",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sliit/path_tracking_object_research_2024.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sliit/path_tracking_object_research_2024/issues"
+  },
+  "homepage": "https://github.com/sliit/path_tracking_object_research_2024#readme",
+  "dependencies": {
+    "axios": "^0.23.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "http-proxy-middleware": "^2.0.6",
+    "jimp": "^0.22.7",
+    "multer": "^1.4.3",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.9.4",
+    "nodemon": "^2.0.16",
+    "path_tracking_object_research_2024": "file:",
+    "png-to-jpeg": "^1.0.1",
+    "to": "^0.2.9",
+    "uniqid": "^5.4.0",
+    "update": "^0.7.4"
+  }
+}

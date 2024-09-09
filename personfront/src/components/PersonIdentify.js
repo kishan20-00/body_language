@@ -53,7 +53,7 @@ function PersonIdentify() {
 
   return (
     <div className="person-identify-page">
-      <h1>Upload and Process Video</h1>
+      <h1>Person Identification</h1>
       
       {/* File input for selecting video */}
       <input type="file" onChange={handleFileChange} accept="video/*" className="file-input" />
